@@ -177,11 +177,13 @@ class ReadActivity : AppCompatActivity(), ColorPickerDialogListener {
 
     private fun Context.getChapterData(index: Int): String? {
         val text =
-            (if (isFromEpub) book.tableOfContents.tocReferences[index].resource.reader.readText() else getQuickChapter(
-                quickdata.meta,
-                quickdata.data[index],
-                index
-            )?.html ?: return null)
+            (
+                if (isFromEpub) book.tableOfContents.tocReferences[index].resource.reader.readText() else getQuickChapter(
+                    quickdata.meta,
+                    quickdata.data[index],
+                    index
+                )?.html ?: return null
+                )
         val document = Jsoup.parse(text)
 
         // REMOVE USELESS STUFF THAT WONT BE USED IN A NORMAL TXT
@@ -202,12 +204,11 @@ class ReadActivity : AppCompatActivity(), ColorPickerDialogListener {
             .replace("</tr>", "</div>")
             .replace("<td>", "")
             .replace("</td>", " ")
-            //.replace("\n\n", "\n") // REMOVES EMPTY SPACE
+            // .replace("\n\n", "\n") // REMOVES EMPTY SPACE
             .replace("...", "…") // MAKES EASIER TO WORK WITH
             .replace("<p>.*<strong>Translator:.*?Editor:.*>".toRegex(), "") // FUCK THIS, LEGIT IN EVERY CHAPTER
             .replace("<.*?Translator:.*?Editor:.*?>".toRegex(), "") // FUCK THIS, LEGIT IN EVERY CHAPTER
     }
-
 
     private fun TextView.setFont(file: File?) {
         if (file == null) {
@@ -256,7 +257,6 @@ class ReadActivity : AppCompatActivity(), ColorPickerDialogListener {
         }
         bottomSheetDialog.show()
     }
-
 
     fun callOnPause(): Boolean {
         if (!isTTSPaused) {
@@ -336,7 +336,7 @@ class ReadActivity : AppCompatActivity(), ColorPickerDialogListener {
     private var currentTTSQueue: String? = null
     private fun speakOut(msg: String, msgQueue: String? = null) {
         canSpeak = false
-        //println("GOT $msg | ${msgQueue ?: "NULL"}")
+        // println("GOT $msg | ${msgQueue ?: "NULL"}")
         if (msg.isEmpty() || msg.isBlank()) {
             showMessage("No data")
             return
@@ -345,13 +345,13 @@ class ReadActivity : AppCompatActivity(), ColorPickerDialogListener {
             if (currentTTSQueue != msg) {
                 speakId++
                 tts!!.speak(msg, TextToSpeech.QUEUE_FLUSH, null, speakId.toString())
-                //println("FLUSH $msg")
+                // println("FLUSH $msg")
             }
             if (msgQueue != null) {
                 speakId++
                 tts!!.speak(msgQueue, TextToSpeech.QUEUE_ADD, null, speakId.toString())
                 currentTTSQueue = msgQueue
-                //println("ADD $msgQueue")
+                // println("ADD $msgQueue")
             }
         }
     }
@@ -364,12 +364,14 @@ class ReadActivity : AppCompatActivity(), ColorPickerDialogListener {
                     val textLine = getMinMax(line.startIndex, line.endIndex)
                     if (textLine != null) {
 
-                        return textLine.max + (read_title_text?.height
-                            ?: 0) - (read_toolbar_holder?.height ?: 0)//dimensionFromAttribute(R.attr.actionBarSize))
+                        return textLine.max + (
+                            read_title_text?.height
+                                ?: 0
+                            ) - (read_toolbar_holder?.height ?: 0) // dimensionFromAttribute(R.attr.actionBarSize))
                     }
                 }
             } catch (e: Exception) {
-                //IDK SMTH HAPPEND
+                // IDK SMTH HAPPEND
             }
         }
         return null
@@ -433,11 +435,13 @@ class ReadActivity : AppCompatActivity(), ColorPickerDialogListener {
     private fun initTTSSession() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             focusRequest = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN).run {
-                setAudioAttributes(AudioAttributes.Builder().run {
-                    setUsage(AudioAttributes.USAGE_MEDIA)
-                    setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
-                    build()
-                })
+                setAudioAttributes(
+                    AudioAttributes.Builder().run {
+                        setUsage(AudioAttributes.USAGE_MEDIA)
+                        setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+                        build()
+                    }
+                )
                 setAcceptsDelayedFocusGain(true)
                 setOnAudioFocusChangeListener(myAudioFocusListener)
                 build()
@@ -449,8 +453,8 @@ class ReadActivity : AppCompatActivity(), ColorPickerDialogListener {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = "Text To Speech"//getString(R.string.channel_name)
-            val descriptionText = "The TTS notification channel" //getString(R.string.channel_description)
+            val name = "Text To Speech" // getString(R.string.channel_name)
+            val descriptionText = "The TTS notification channel" // getString(R.string.channel_description)
             val importance = NotificationManager.IMPORTANCE_DEFAULT
             val channel = NotificationChannel(TTS_CHANNEL_ID, name, importance).apply {
                 description = descriptionText
@@ -493,14 +497,13 @@ class ReadActivity : AppCompatActivity(), ColorPickerDialogListener {
             } else {
                 main {
                     val builder = NotificationCompat.Builder(this, TTS_CHANNEL_ID)
-                        .setSmallIcon(R.drawable.ic_baseline_volume_up_24) //TODO NICE ICON
+                        .setSmallIcon(R.drawable.ic_baseline_volume_up_24) // TODO NICE ICON
                         .setContentTitle(getBookTitle())
                         .setContentText(chapterName)
 
                         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                         .setOnlyAlertOnce(true)
                         .setOngoing(true)
-
 
                     val icon = withContext(Dispatchers.IO) { getBookBitmap() }
                     if (icon != null) builder.setLargeIcon(icon)
@@ -533,15 +536,16 @@ class ReadActivity : AppCompatActivity(), ColorPickerDialogListener {
                                     TTSActionType.Resume -> R.drawable.ic_baseline_play_arrow_24
                                     TTSActionType.Pause -> R.drawable.ic_baseline_pause_24
                                     TTSActionType.Stop -> R.drawable.ic_baseline_stop_24
-                                }, when (i) {
+                                },
+                                when (i) {
                                     TTSActionType.Resume -> "Resume"
                                     TTSActionType.Pause -> "Pause"
                                     TTSActionType.Stop -> "Stop"
-                                }, pending
+                                },
+                                pending
                             )
                         )
                     }
-
 
                     with(NotificationManagerCompat.from(this)) {
                         // notificationId is a unique int for each notification that you must define
@@ -595,7 +599,8 @@ class ReadActivity : AppCompatActivity(), ColorPickerDialogListener {
         // Enables regular immersive mode.
         // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
         // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-        window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_IMMERSIVE
+        window.decorView.systemUiVisibility = (
+            View.SYSTEM_UI_FLAG_IMMERSIVE
                 // Set the content to appear under the system bars so that the
                 // content doesn't resize when the system bars hide and show.
                 or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -603,8 +608,8 @@ class ReadActivity : AppCompatActivity(), ColorPickerDialogListener {
                 or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 // Hide the nav bar and status bar
                 or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_FULLSCREEN)
-
+                or View.SYSTEM_UI_FLAG_FULLSCREEN
+            )
 
         fun lowerBottomNav(v: View) {
             v.translationY = 0f
@@ -633,12 +638,16 @@ class ReadActivity : AppCompatActivity(), ColorPickerDialogListener {
     private fun showSystemUI() {
         isHidden = false
         if (this.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+            window.decorView.systemUiVisibility = (
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
+                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                )
         } else {
-            window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
+            window.decorView.systemUiVisibility = (
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                )
         }
 
         read_toolbar_holder.visibility = View.VISIBLE
@@ -687,33 +696,52 @@ class ReadActivity : AppCompatActivity(), ColorPickerDialogListener {
     private fun loadPrevChapter(): Boolean {
         return if (currentChapter <= 0) {
             false
-            //Toast.makeText(this, "No more chapters", Toast.LENGTH_SHORT).show()
+            // Toast.makeText(this, "No more chapters", Toast.LENGTH_SHORT).show()
         } else {
             loadChapter(currentChapter - 1, false)
             true
         }
     }
 
+    // £0.00 on this failing to load next chap
+    private fun pageScroll(direction: Int) {
+        val scrollDown = direction == View.FOCUS_DOWN
+        var scrollTo = 0
+
+        if (scrollDown) {
+            scrollTo = read_scroll.scrollY + read_scroll.height
+            val child = read_scroll.getChildAt(0)
+
+            if (scrollTo + read_scroll.height > child.bottom) {
+                scrollTo = child.bottom - read_scroll.height
+            }
+        } else {
+            scrollTo = read_scroll.scrollY - read_scroll.height
+
+            if (scrollTo < 0) {
+                scrollTo = 0
+            }
+        }
+
+        val prevPosition = read_scroll.scrollY
+        val topLine = read_text.layout.getLineForVertical(scrollTo)
+        read_scroll.scrollTo(0, textLines!!.get(topLine).topPosition)
+
+        if (read_scroll.scrollY == prevPosition && scrollDown) {
+            loadNextChapter()
+        }
+    }
+
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         return if (scrollWithVol && isHidden && (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP)) {
+            read_scroll.setSmoothScrollingEnabled(false)
             if (textLines != null) {
                 val readHeight = read_scroll.height - read_overlay.height
                 if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
                     if (isTTSRunning) {
                         nextTTSLine()
                     } else {
-                        if (read_scroll.scrollY >= getScrollRange()) {
-                            loadNextChapter()
-                        } else {
-                            for (t in textLines!!) {
-                                if (t.topPosition > mainScrollY + readHeight) {
-                                    read_scroll.scrollTo(0, t.topPosition - 7.toPx)
-                                    read_scroll.fling(0)
-                                    return true
-                                }
-                            }
-                            loadNextChapter()
-                        }
+                        pageScroll(View.FOCUS_DOWN)
                     }
                 } else {
                     if (isTTSRunning) {
@@ -722,14 +750,7 @@ class ReadActivity : AppCompatActivity(), ColorPickerDialogListener {
                         if (read_scroll.scrollY <= 0) {
                             loadPrevChapter()
                         } else {
-                            for (t in textLines!!) {
-                                if (t.topPosition > mainScrollY - read_scroll.height) {
-                                    read_scroll.scrollTo(0, t.topPosition - 7.toPx)
-                                    read_scroll.fling(0)
-                                    return true
-                                }
-                            }
-                            loadPrevChapter()
+                            pageScroll(View.FOCUS_UP)
                         }
                     }
                 }
@@ -756,7 +777,6 @@ class ReadActivity : AppCompatActivity(), ColorPickerDialogListener {
     var textLines: ArrayList<TextLine>? = null
     var mainScrollY = 0
     var scrollYOverflow = 0f
-
 
     var startY: Float? = null
     var scrollStartY: Float = 0f
@@ -830,7 +850,7 @@ class ReadActivity : AppCompatActivity(), ColorPickerDialogListener {
             val spanned = HtmlCompat.fromHtml(
                 txt, HtmlCompat.FROM_HTML_MODE_LEGACY
             )
-            //println("TEXT:" + document.html())
+            // println("TEXT:" + document.html())
             read_text.text = spanned
             currentText = spanned.toString()
 
@@ -877,7 +897,7 @@ class ReadActivity : AppCompatActivity(), ColorPickerDialogListener {
     }
 
     private fun nextTTSLine() {
-        //readFromIndex++
+        // readFromIndex++
         interruptTTS()
     }
 
@@ -912,7 +932,7 @@ class ReadActivity : AppCompatActivity(), ColorPickerDialogListener {
         uiScope.launch {
             // CLEAN TEXT IS JUST TO MAKE SURE THAT THE TTS SPEAKER DOES NOT SPEAK WRONG, MUST BE SAME LENGTH
             val cleanText = text
-                .replace("\\.([A-z])".toRegex(), ",$1")//\.([A-z]) \.([^-\s])
+                .replace("\\.([A-z])".toRegex(), ",$1") // \.([A-z]) \.([^-\s])
                 .replace("([0-9])\\.([0-9])".toRegex(), "$1,$2") // GOOD FOR DECIMALS
                 .replace(" (Dr|Mr)\\. ([A-Z])".toRegex(), " $1, $2") // Doctor or Mister
 
@@ -951,7 +971,6 @@ class ReadActivity : AppCompatActivity(), ColorPickerDialogListener {
                     }
                 }
 
-
                 if (endIndex > text.length) {
                     endIndex = text.length
                 }
@@ -980,7 +999,7 @@ class ReadActivity : AppCompatActivity(), ColorPickerDialogListener {
                 try {
                     // THIS PART IF FOR THE SPEAK PART, REMOVING STUFF THAT IS WACK
                     val message = text.substring(index, endIndex)
-                    var msg = message//Regex("\\p{L}").replace(message,"")
+                    var msg = message // Regex("\\p{L}").replace(message,"")
                     val invalidChars =
                         arrayOf(
                             "-",
@@ -1006,9 +1025,9 @@ class ReadActivity : AppCompatActivity(), ColorPickerDialogListener {
                     /*.replace("…", ",")*/
 
                     if (msg
-                            .replace("\n", "")
-                            .replace("\t", "")
-                            .replace(".", "").isNotEmpty()
+                        .replace("\n", "")
+                        .replace("\t", "")
+                        .replace(".", "").isNotEmpty()
                     ) {
                         if (isValidSpeakOutMsg(msg)) {
                             ttsLines.add(TTSLine(msg, index, endIndex))
@@ -1129,7 +1148,7 @@ class ReadActivity : AppCompatActivity(), ColorPickerDialogListener {
                         delay(10)
                         if (!isTTSRunning) return@launch
                     }
-                    //println("NEXTENDEDMS " + System.currentTimeMillis())
+                    // println("NEXTENDEDMS " + System.currentTimeMillis())
                     readFromIndex++
                 } catch (e: Exception) {
                     println(e)
@@ -1201,7 +1220,7 @@ class ReadActivity : AppCompatActivity(), ColorPickerDialogListener {
 
     private fun selectChapter() {
         val builderSingle: AlertDialog.Builder = AlertDialog.Builder(this)
-        //builderSingle.setIcon(R.drawable.ic_launcher)
+        // builderSingle.setIcon(R.drawable.ic_launcher)
         builderSingle.setTitle(chapterTitles[currentChapter]) //  "Select Chapter"
 
         val arrayAdapter = ArrayAdapter<String>(this, R.layout.chapter_select_dialog)
@@ -1291,7 +1310,6 @@ class ReadActivity : AppCompatActivity(), ColorPickerDialogListener {
         scrollWithVol = scroll
         setKey(EPUB_SCROLL_VOL, scroll)
     }
-
 
     private fun Context.getLockTTS(): Boolean {
         lockTTS = getKey(EPUB_SCROLL_VOL, true)!!
@@ -1435,7 +1453,7 @@ class ReadActivity : AppCompatActivity(), ColorPickerDialogListener {
             "Red" -> R.style.OverlayPrimaryColorRed
             else -> R.style.OverlayPrimaryColorNormal
         }
-        //val isLightTheme = themeName == "Light"
+        // val isLightTheme = themeName == "Light"
 
         theme.applyStyle(
             currentTheme,
@@ -1496,13 +1514,12 @@ class ReadActivity : AppCompatActivity(), ColorPickerDialogListener {
             setReadTextFont(if (index > 0) fonts[index] else null, null)
         }
 
-
         createNotificationChannel()
         read_title_text.minHeight = read_toolbar.height
 
         fixPaddingStatusbar(read_toolbar)
 
-        //<editor-fold desc="Screen Rotation">
+        // <editor-fold desc="Screen Rotation">
         fun setRot(org: OrientationType) {
             orientationType = org.prefValue
             requestedOrientation = org.flag
@@ -1520,7 +1537,7 @@ class ReadActivity : AppCompatActivity(), ColorPickerDialogListener {
                 setRot(org)
             }
         }
-        val colorPrimary = colorFromAttribute(R.attr.colorPrimary)//   getColor(R.color.colorPrimary)
+        val colorPrimary = colorFromAttribute(R.attr.colorPrimary) //   getColor(R.color.colorPrimary)
 
         read_action_settings.setOnClickListener {
             val bottomSheetDialog = BottomSheetDialog(this)
@@ -1540,7 +1557,7 @@ class ReadActivity : AppCompatActivity(), ColorPickerDialogListener {
                 bottomSheetDialog.findViewById<TextView>(R.id.read_settings_text_size_text)!!
             val readSettingsTextFontText = bottomSheetDialog.findViewById<TextView>(R.id.read_settings_text_font_text)!!
 
-            //val root = bottomSheetDialog.findViewById<LinearLayout>(R.id.read_settings_root)!!
+            // val root = bottomSheetDialog.findViewById<LinearLayout>(R.id.read_settings_root)!!
             val horizontalColors = bottomSheetDialog.findViewById<LinearLayout>(R.id.read_settings_colors)!!
 
             val readShowFonts = bottomSheetDialog.findViewById<MaterialButton>(R.id.read_show_fonts)
@@ -1580,7 +1597,7 @@ class ReadActivity : AppCompatActivity(), ColorPickerDialogListener {
             for ((index, backgroundColor) in bgColors.withIndex()) {
                 val textColor = textColors[index]
 
-                val imageHolder = layoutInflater.inflate(R.layout.color_round_checkmark, null) //color_round_checkmark
+                val imageHolder = layoutInflater.inflate(R.layout.color_round_checkmark, null) // color_round_checkmark
                 val image = imageHolder.findViewById<ImageView>(R.id.image1)
                 image.backgroundTintList = ColorStateList.valueOf(backgroundColor)
                 image.setOnClickListener {
@@ -1722,7 +1739,7 @@ class ReadActivity : AppCompatActivity(), ColorPickerDialogListener {
                 )
             )
         )
-        //</editor-fold>
+        // </editor-fold>
 
         read_action_chapters.setOnClickListener {
             selectChapter()
@@ -1768,7 +1785,7 @@ class ReadActivity : AppCompatActivity(), ColorPickerDialogListener {
                             showMessage("This Language is not supported")
                         } else {
                             tts!!.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
-                                //MIGHT BE INTERESTING https://stackoverflow.com/questions/44461533/android-o-new-texttospeech-onrangestart-callback
+                                // MIGHT BE INTERESTING https://stackoverflow.com/questions/44461533/android-o-new-texttospeech-onrangestart-callback
                                 override fun onDone(utteranceId: String) {
                                     canSpeak = true
                                     //  println("ENDMS: " + System.currentTimeMillis())
@@ -1783,7 +1800,7 @@ class ReadActivity : AppCompatActivity(), ColorPickerDialogListener {
                                 }
                             })
                             startTTS()
-                            //readTTSClick()
+                            // readTTSClick()
                         }
                     } else {
                         val errorMSG = when (status) {
@@ -1824,7 +1841,7 @@ class ReadActivity : AppCompatActivity(), ColorPickerDialogListener {
         fixPaddingStatusbar(read_topmargin)
 
         window.navigationBarColor =
-            colorFromAttribute(R.attr.grayBackground) //getColor(R.color.readerHightlightedMetaInfo)
+            colorFromAttribute(R.attr.grayBackground) // getColor(R.color.readerHightlightedMetaInfo)
 
         read_scroll.setOnScrollChangeListener { _, _, scrollY, _, _ ->
             checkTTSRange(scrollY)
@@ -1879,7 +1896,6 @@ class ReadActivity : AppCompatActivity(), ColorPickerDialogListener {
                                     OVERFLOW_NEXT_CHAPTER_DELTA.toFloat()
                                 )
                             ) * 4 // *4 is the amount the page moves when you overload it
-
                         }
                     }
 
@@ -1923,11 +1939,14 @@ class ReadActivity : AppCompatActivity(), ColorPickerDialogListener {
 //        }
 
         main { // THIS IS USED FOR INSTANT LOAD
-            read_loading.postDelayed({
-                if (!this::chapterTitles.isInitialized) {
-                    read_loading?.visibility = View.VISIBLE
-                }
-            }, 200) // I DON'T WANT TO SHOW THIS IN THE BEGINNING, IN CASE IF SMALL LOAD TIME
+            read_loading.postDelayed(
+                {
+                    if (!this::chapterTitles.isInitialized) {
+                        read_loading?.visibility = View.VISIBLE
+                    }
+                },
+                200
+            ) // I DON'T WANT TO SHOW THIS IN THE BEGINNING, IN CASE IF SMALL LOAD TIME
 
             withContext(Dispatchers.IO) {
                 if (isFromEpub) {
@@ -1938,8 +1957,8 @@ class ReadActivity : AppCompatActivity(), ColorPickerDialogListener {
                 }
             }
 
-            if(!isFromEpub && quickdata.data.size <= 0) {
-                Toast.makeText(this, R.string.no_chapters_found,Toast.LENGTH_SHORT).show()
+            if (!isFromEpub && quickdata.data.size <= 0) {
+                Toast.makeText(this, R.string.no_chapters_found, Toast.LENGTH_SHORT).show()
                 finish()
                 return@main
             }
