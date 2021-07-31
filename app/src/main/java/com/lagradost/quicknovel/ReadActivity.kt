@@ -729,7 +729,7 @@ class ReadActivity : AppCompatActivity(), ColorPickerDialogListener {
         val lineCount = read_text.layout.lineCount
         val lineHeight = (lineCount - 1) * read_text.getTextSize()
 
-        read_scroll.scrollTo(0, prevLine.bottomPosition + lineHeight)
+        read_scroll.scrollTo(0, prevLine.bottomPosition + lineHeight.toInt())
 
         if (read_scroll.scrollY == prevPosition && scrollDown) {
             loadNextChapter()
