@@ -703,7 +703,6 @@ class ReadActivity : AppCompatActivity(), ColorPickerDialogListener {
         }
     }
 
-    // £0.00 on this failing to load next chap
     private fun pageScroll(direction: Int) {
         val scrollDown = direction == View.FOCUS_DOWN
         var scrollTo = 0
@@ -726,11 +725,11 @@ class ReadActivity : AppCompatActivity(), ColorPickerDialogListener {
         val prevPosition = read_scroll.scrollY
         val topLine = read_text.layout.getLineForVertical(scrollTo)
 
-        val currentLine = textLines!!.get(topLine)
         val prevLine = textLines!!.get(topLine - 1)
-        val newPosition = (prevLine.bottomPosition + currentLine.topPosition) / 2
+        val lineCount = read_text.layout.lineCount
+        val lineHeight = (lineCount - 1) * read_text.getTextSize()
 
-        read_scroll.scrollTo(0, newPosition)
+        read_scroll.scrollTo(0, prevLine.bottomPosition + lineHeight)
 
         if (read_scroll.scrollY == prevPosition && scrollDown) {
             loadNextChapter()
