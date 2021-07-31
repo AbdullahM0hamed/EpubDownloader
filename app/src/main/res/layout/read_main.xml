@@ -68,6 +68,8 @@
                     </TextView>
                     <com.lagradost.quicknovel.ui.roundedbg.RoundedBgTextView
                             android:id="@+id/read_text"
+                            android:ellipsize="marquee"
+                            android:layout_weight="1"
                             android:paddingLeft="20dp"
                             android:paddingRight="20dp"
                             android:paddingBottom="25dp"
