@@ -726,7 +726,7 @@ class ReadActivity : AppCompatActivity(), ColorPickerDialogListener {
         val topLine = read_text.layout.getLineForVertical(scrollTo)
         val position = read_text.layout.getLineTop(topLine)
 
-        read_scroll.scrollTo(0, position - 7.toPx)
+        read_scroll.scrollTo(0, position)
 
         if (read_scroll.scrollY == prevPosition && scrollDown) {
             loadNextChapter()
