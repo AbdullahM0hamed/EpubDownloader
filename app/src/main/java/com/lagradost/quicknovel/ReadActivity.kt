@@ -725,7 +725,7 @@ class ReadActivity : AppCompatActivity(), ColorPickerDialogListener {
         val prevPosition = read_scroll.scrollY
         val topLine = read_text.layout.getLineForVertical(scrollTo)
         val position = read_text.layout.getLineTop(topLine - 1)
-        val offset = read_title.height + read_text.paddingTop
+        val offset = read_title_text.height + read_text.paddingTop
 
         read_scroll.scrollTo(0, position + offset)
 
