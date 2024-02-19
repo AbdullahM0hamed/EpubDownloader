@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
+//apply plugin: 'com.alexvasilkov.git-dependencies'
 
 android {
     compileSdkVersion 34
@@ -50,7 +51,6 @@ repositories {
     maven {
         url 'https://github.com/psiegman/mvn-repo/raw/master/releases'
     }
-    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -85,14 +85,35 @@ dependencies {
     implementation("com.google.android.material:material:1.5.0")
 
     implementation 'androidx.media:media:1.6.0'
-    implementation 'com.github.LagradOst:SafeFile:0.0.6' // To Prevent the URI File Fu*kery
     implementation 'com.jaredrummler:colorpicker:1.1.0'
 
-    implementation 'com.github.Blatzar:NiceHttp:0.4.4'
 
     implementation "io.noties.markwon:core:4.6.2"
     implementation "io.noties.markwon:image-glide:4.6.2"
     implementation "io.noties.markwon:html:4.6.2"
 
     implementation "com.facebook.shimmer:shimmer:0.5.0"
+    implementation project(":NiceHttp")
+    implementation(project(":SafeFile")) {
+        exclude group: "com.github.tachiyomiorg" //:unifile:17bec43"
+    }
+    implementation project(":UniFile")
+}
+
+git {
+    implementation "https://github.com/Blatzar/NiceHttp.git", {
+        name 'NiceHttp'
+        commit 'ab6080f53ffff94e347ac494806258fce80ba99b'
+        projectPath '/library'
+    }
+    implementation "https://github.com/LagradOst/SafeFile.git", {
+        name 'SafeFile'
+        commit 'edd10ad2e620c84fd76f90103b08f5ccbfbe1bdb'
+        projectPath '/library'
+    }
+    implementation "https://github.com/tachiyomiorg/UniFile", {
+        name 'UniFile'
+        commit '7c257e1c642caa5ec7a41c640d61cd096f7f5c2e'
+        projectPath '/library'
+    }
 }
